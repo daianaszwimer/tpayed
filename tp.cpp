@@ -1,25 +1,25 @@
 #include<iostream>
 #include<cstdio>
-#include<stdlib.h>
+#include<stdlib.h>  	//para la funcion random
 #include<string.h>
-#include<time.h>
+#include<time.h>		//el random se basa en la hora actual
 
 #define VEL 40 			//Velocidad promedio del movil
 
 using namespace std;
 
 struct NODO{
-	string descripcion;
-	NODO *adyacente[4];
-	int distancia[4];
-	float demora[4];
+	string descripcion;		//Descripcion para ver que colegio es
+	NODO *adyacente[4];		//Vector de punteros que apuntan a los colegios siguientes
+	int distancia[4];		//Distancia entre colegios (en cuadras)
+	float demora[4];		//Demora entre colegios
 };
 
-void crearMapa(NODO *&P);
+void crearMapa(NODO *&P);	//En esta funcion creamos todos los nodos y los interconectamos como pide la consigna
 
 int main(){
-	srand(time(NULL));
-	NODO *Puntero=NULL;
+	srand(time(NULL));		//Basamos el random en la hora actual
+	NODO *Puntero=NULL;		//Puntero que va a ir apuntando a cada colegio a medida que avanzemos por el camino
 	crearMapa(Puntero);
 	return 0;
 }
@@ -132,5 +132,5 @@ void crearMapa(NODO *&P){
 	CC->adyacente[1]=C6;				//Conexión CC-C6
 	CC->adyacente[2]=C7;				//Conexión CC-C7	
 	
-	P=CL;	
+	P=CL;								//El puntero empieza en el centro de logística
 }
