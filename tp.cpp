@@ -103,4 +103,34 @@ void crearMapa(NODO *&P){
 	CC->demora[1]=((float) rand() / (RAND_MAX))*VEL;	
 	CC->demora[2]=((float) rand() / (RAND_MAX))*VEL;
 		
+	CL->adyacente[0]=C1;				//Conexión CL-C1
+	CL->adyacente[1]=C2;				//Conexión CL-C2
+	C1->adyacente[0]=CL;				//Conexión C1-CL
+	C1->adyacente[1]=C2;				//Conexión C1-C2
+	C1->adyacente[2]=C3;				//Conexión C1-C3
+	C2->adyacente[0]=CL;				//Conexión C2-CL
+	C2->adyacente[1]=C1;				//Conexión C2-C1
+	C2->adyacente[2]=C3;				//Conexión C2-C3
+	C2->adyacente[3]=C4;				//Conexión C2-C4
+	C3->adyacente[0]=C1;				//Conexión C3-C1
+	C3->adyacente[1]=C2;				//Conexión C3-C2
+	C3->adyacente[2]=C4;				//Conexión C3-C4
+	C3->adyacente[3]=C5;				//Conexión C3-C5
+	C4->adyacente[0]=C2;				//Conexión C4-C2
+	C4->adyacente[1]=C3;				//Conexión C4-C3
+	C4->adyacente[2]=C5;				//Conexión C4-C5
+	C5->adyacente[0]=C3;				//Conexión C5-C3
+	C5->adyacente[1]=C4;				//Conexión C5-C4
+	C5->adyacente[2]=C6;				//Conexión C5-C6
+	C5->adyacente[3]=C7;				//Conexión C5-C7
+	C6->adyacente[0]=C5;				//Conexión C6-C5
+	C6->adyacente[1]=C7;				//Conexión C6-C7
+	C6->adyacente[2]=CC;				//Conexión C6-CC
+	C7->adyacente[0]=C5;				//Conexión C7-C5
+	C7->adyacente[1]=C6;				//Conexión C7-C6
+	C7->adyacente[2]=CC;				//Conexión C7-CC
+	CC->adyacente[1]=C6;				//Conexión CC-C6
+	CC->adyacente[2]=C7;				//Conexión CC-C7	
+	
+	P=CL;	
 }
