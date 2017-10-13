@@ -13,14 +13,16 @@ struct NODO{
 	NODO *adyacente[4];		//Vector de punteros que apuntan a los colegios siguientes
 	int distancia[4];		//Distancia entre colegios (en cuadras)
 	float demora[4];		//Demora entre colegios
+	bool etiqueta;
+	float pesosAcumulados;
 };
 
 void crearMapa(NODO *&P);	//En esta funcion creamos todos los nodos y los interconectamos como pide la consigna
 
 int main(){
 	srand(time(NULL));		//Basamos el random en la hora actual
-	NODO *Puntero=NULL;		//Puntero que va a ir apuntando a cada colegio a medida que avanzemos por el camino
-	crearMapa(Puntero);
+	NODO *puntero=NULL;		//Puntero que va a ir apuntando a cada colegio a medida que avanzemos por el camino
+	crearMapa(puntero);
 	return 0;
 }
 
@@ -44,6 +46,16 @@ void crearMapa(NODO *&P){
 	C6->descripcion="Colegio Nro. 6";
 	C7->descripcion="Colegio Nro. 7";
 	CC->descripcion="Centro de Computos";
+	
+	CL->etiqueta=false;
+	C1->etiqueta=false;
+	C2->etiqueta=false;
+	C3->etiqueta=false;
+	C4->etiqueta=false;
+	C5->etiqueta=false;
+	C6->etiqueta=false;
+	C7->etiqueta=false;
+	CC->etiqueta=false;
 	
 	CL->distancia[0]=4;					//Distancia de CL a C1
 	CL->distancia[1]=2;					//Distancia de CL a C2
@@ -74,63 +86,46 @@ void crearMapa(NODO *&P){
 	CC->distancia[1]=C6->distancia[2];	//Distancia de CC a C6
 	CC->distancia[2]=C7->distancia[2];	//Distancia de CC a C7
 	
-	CL->demora[0]=((float) rand() / (RAND_MAX))*VEL;					
-	CL->demora[1]=((float) rand() / (RAND_MAX))*VEL;				
-	C1->demora[0]=((float) rand() / (RAND_MAX))*VEL;	
-	C1->demora[1]=((float) rand() / (RAND_MAX))*VEL;					
-	C1->demora[2]=((float) rand() / (RAND_MAX))*VEL;					
-	C2->demora[0]=((float) rand() / (RAND_MAX))*VEL;	
-	C2->demora[1]=((float) rand() / (RAND_MAX))*VEL;	
-	C2->demora[2]=((float) rand() / (RAND_MAX))*VEL;					
-	C2->demora[3]=((float) rand() / (RAND_MAX))*VEL;				
-	C3->demora[0]=((float) rand() / (RAND_MAX))*VEL;	
-	C3->demora[1]=((float) rand() / (RAND_MAX))*VEL;	
-	C3->demora[2]=((float) rand() / (RAND_MAX))*VEL;					
-	C3->demora[3]=((float) rand() / (RAND_MAX))*VEL;					
-	C4->demora[0]=((float) rand() / (RAND_MAX))*VEL;	
-	C4->demora[1]=((float) rand() / (RAND_MAX))*VEL;	
-	C4->demora[2]=((float) rand() / (RAND_MAX))*VEL;					
-	C5->demora[0]=((float) rand() / (RAND_MAX))*VEL;	
-	C5->demora[1]=((float) rand() / (RAND_MAX))*VEL;	
-	C5->demora[2]=((float) rand() / (RAND_MAX))*VEL;					
-	C5->demora[3]=((float) rand() / (RAND_MAX))*VEL;					
-	C6->demora[0]=((float) rand() / (RAND_MAX))*VEL;	
-	C6->demora[1]=((float) rand() / (RAND_MAX))*VEL;					
-	C6->demora[2]=((float) rand() / (RAND_MAX))*VEL;					
-	C7->demora[0]=((float) rand() / (RAND_MAX))*VEL;	
-	C7->demora[1]=((float) rand() / (RAND_MAX))*VEL;	
-	C7->demora[2]=((float) rand() / (RAND_MAX))*VEL;					
-	CC->demora[1]=((float) rand() / (RAND_MAX))*VEL;	
-	CC->demora[2]=((float) rand() / (RAND_MAX))*VEL;
+	for(int i=0;i<4;i++){
+		CL->demora[i]=((float) rand() / (RAND_MAX))*VEL;									
+		C1->demora[i]=((float) rand() / (RAND_MAX))*VEL;						
+		C2->demora[i]=((float) rand() / (RAND_MAX))*VEL;		
+		C3->demora[i]=((float) rand() / (RAND_MAX))*VEL;		
+		C4->demora[i]=((float) rand() / (RAND_MAX))*VEL;					
+		C5->demora[i]=((float) rand() / (RAND_MAX))*VEL;					
+		C6->demora[i]=((float) rand() / (RAND_MAX))*VEL;						
+		C7->demora[i]=((float) rand() / (RAND_MAX))*VEL;						
+		CC->demora[i]=((float) rand() / (RAND_MAX))*VEL;
+	}	
 		
-	CL->adyacente[0]=C1;				//Conexi髇 CL-C1
-	CL->adyacente[1]=C2;				//Conexi髇 CL-C2
-	C1->adyacente[0]=CL;				//Conexi髇 C1-CL
-	C1->adyacente[1]=C2;				//Conexi髇 C1-C2
-	C1->adyacente[2]=C3;				//Conexi髇 C1-C3
-	C2->adyacente[0]=CL;				//Conexi髇 C2-CL
-	C2->adyacente[1]=C1;				//Conexi髇 C2-C1
-	C2->adyacente[2]=C3;				//Conexi髇 C2-C3
-	C2->adyacente[3]=C4;				//Conexi髇 C2-C4
-	C3->adyacente[0]=C1;				//Conexi髇 C3-C1
-	C3->adyacente[1]=C2;				//Conexi髇 C3-C2
-	C3->adyacente[2]=C4;				//Conexi髇 C3-C4
-	C3->adyacente[3]=C5;				//Conexi髇 C3-C5
-	C4->adyacente[0]=C2;				//Conexi髇 C4-C2
-	C4->adyacente[1]=C3;				//Conexi髇 C4-C3
-	C4->adyacente[2]=C5;				//Conexi髇 C4-C5
-	C5->adyacente[0]=C3;				//Conexi髇 C5-C3
-	C5->adyacente[1]=C4;				//Conexi髇 C5-C4
-	C5->adyacente[2]=C6;				//Conexi髇 C5-C6
-	C5->adyacente[3]=C7;				//Conexi髇 C5-C7
-	C6->adyacente[0]=C5;				//Conexi髇 C6-C5
-	C6->adyacente[1]=C7;				//Conexi髇 C6-C7
-	C6->adyacente[2]=CC;				//Conexi髇 C6-CC
-	C7->adyacente[0]=C5;				//Conexi髇 C7-C5
-	C7->adyacente[1]=C6;				//Conexi髇 C7-C6
-	C7->adyacente[2]=CC;				//Conexi髇 C7-CC
-	CC->adyacente[1]=C6;				//Conexi髇 CC-C6
-	CC->adyacente[2]=C7;				//Conexi髇 CC-C7	
+	CL->adyacente[0]=C1;				//Conexi贸n CL-C1
+	CL->adyacente[1]=C2;				//Conexi贸n CL-C2
+	C1->adyacente[0]=CL;				//Conexi贸n C1-CL
+	C1->adyacente[1]=C2;				//Conexi贸n C1-C2
+	C1->adyacente[2]=C3;				//Conexi贸n C1-C3
+	C2->adyacente[0]=CL;				//Conexi贸n C2-CL
+	C2->adyacente[1]=C1;				//Conexi贸n C2-C1
+	C2->adyacente[2]=C3;				//Conexi贸n C2-C3
+	C2->adyacente[3]=C4;				//Conexi贸n C2-C4
+	C3->adyacente[0]=C1;				//Conexi贸n C3-C1
+	C3->adyacente[1]=C2;				//Conexi贸n C3-C2
+	C3->adyacente[2]=C4;				//Conexi贸n C3-C4
+	C3->adyacente[3]=C5;				//Conexi贸n C3-C5
+	C4->adyacente[0]=C2;				//Conexi贸n C4-C2
+	C4->adyacente[1]=C3;				//Conexi贸n C4-C3
+	C4->adyacente[2]=C5;				//Conexi贸n C4-C5
+	C5->adyacente[0]=C3;				//Conexi贸n C5-C3
+	C5->adyacente[1]=C4;				//Conexi贸n C5-C4
+	C5->adyacente[2]=C6;				//Conexi贸n C5-C6
+	C5->adyacente[3]=C7;				//Conexi贸n C5-C7
+	C6->adyacente[0]=C5;				//Conexi贸n C6-C5
+	C6->adyacente[1]=C7;				//Conexi贸n C6-C7
+	C6->adyacente[2]=CC;				//Conexi贸n C6-CC
+	C7->adyacente[0]=C5;				//Conexi贸n C7-C5
+	C7->adyacente[1]=C6;				//Conexi贸n C7-C6
+	C7->adyacente[2]=CC;				//Conexi贸n C7-CC
+	CC->adyacente[1]=C6;				//Conexi贸n CC-C6
+	CC->adyacente[2]=C7;				//Conexi贸n CC-C7	
 	
-	P=CL;								//El puntero empieza en el centro de log韘tica
+	P=CL;								//El puntero empieza en el centro de log铆stica
 }
