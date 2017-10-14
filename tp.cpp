@@ -15,7 +15,7 @@ struct NODO{
 	int distancia[4];		//Distancia entre colegios (en cuadras)
 	float demora[4];		//Demora entre colegios
 	bool etiqueta;
-	float pesosAcumulados;
+	float pesoAcumulado;
 };
 
 void crearMapa(NODO *&P);	//En esta funcion creamos todos los nodos y los interconectamos como pide la consigna
@@ -26,17 +26,51 @@ int main(){
 	srand(time(NULL));		//Basamos el random en la hora actual
 	NODO *puntero=NULL;		//Puntero que va a ir apuntando a cada colegio a medida que avanzemos por el camino
 	crearMapa(puntero);
+	NODO *camino[9];
+	NODO *sgte1;
+	NODO *sgte2;
 	
-	while(puntero->adyacente[i]!=NULL){
-		actualizarPesos(puntero, puntero->adyacente[i], i);
-		i++;
+	camino[0] = puntero;
+	
+	for(int j=1;j<3;j++){
+	
+		sgte1 = puntero->adyacente[i];
+		sgte2 = puntero->adyacente[i+1];
+	
+		while(puntero->adyacente[i]!=NULL){
+			actualizarPesos(puntero, puntero->adyacente[i], i);
+			i++;
+		}
+		
+		i=0;
+	
+		while(sgte2!=NULL){
+			if(sgte1->pesoAcumulado < sgte2->pesoAcumulado){
+				camino[j] = sgte1;
+			}else{
+				camino[j] = sgte2;
+			}
+			i++;
+			sgte1 = puntero->adyacente[i];
+			sgte2 = puntero->adyacente[i+1];
+		}
+	
+		//puntero = camino[j];
+		i=0;
 	}
-	i=0;
-	cout<<puntero->pesosAcumulados<<endl;
+	
+	/*i=0;
+	cout<<puntero->pesoAcumulado<<endl;
 	while(puntero->adyacente[i]!=NULL){
-	cout<<puntero->adyacente[i]->pesosAcumulados<<endl;
-	i++;
-}
+		cout<<puntero->adyacente[i]->pesoAcumulado<<endl;
+		i++;
+	}*/
+	
+	cout<<"El camino es:"<<endl;
+	for(int k=0;k<3;k++){
+		cout<<camino[k]->descripcion<<endl;
+	}
+
 	return 0;
 }
 
@@ -61,7 +95,7 @@ void crearMapa(NODO *&P){
 	C7->descripcion="Colegio Nro. 7";
 	CC->descripcion="Centro de Computos";
 	
-	CL->etiqueta=false;
+	CL->etiqueta=true;
 	C1->etiqueta=false;
 	C2->etiqueta=false;
 	C3->etiqueta=false;
@@ -71,15 +105,15 @@ void crearMapa(NODO *&P){
 	C7->etiqueta=false;
 	CC->etiqueta=false;
 	
-	CL->pesosAcumulados=0;
-	C1->pesosAcumulados=INF;
-	C2->pesosAcumulados=INF;
-	C3->pesosAcumulados=INF;
-	C4->pesosAcumulados=INF;
-	C5->pesosAcumulados=INF;
-	C6->pesosAcumulados=INF;
-	C7->pesosAcumulados=INF;
-	CC->pesosAcumulados=INF;
+	CL->pesoAcumulado=0;
+	C1->pesoAcumulado=INF;
+	C2->pesoAcumulado=INF;
+	C3->pesoAcumulado=INF;
+	C4->pesoAcumulado=INF;
+	C5->pesoAcumulado=INF;
+	C6->pesoAcumulado=INF;
+	C7->pesoAcumulado=INF;
+	CC->pesoAcumulado=INF;
 	
 	CL->distancia[0]=4;					//Distancia de CL a C1
 	CL->distancia[1]=2;					//Distancia de CL a C2
@@ -155,7 +189,7 @@ void crearMapa(NODO *&P){
 }
 
 void actualizarPesos(NODO *&actual, NODO *&adyacente, int i){
-    if(actual->pesosAcumulados + actual->distancia[i] < adyacente->pesosAcumulados){
-        adyacente->pesosAcumulados = actual->pesosAcumulados + actual->distancia[i];
+    if(actual->pesoAcumulado + actual->distancia[i] < adyacente->pesoAcumulado){
+        adyacente->pesoAcumulado = actual->pesoAcumulado + actual->distancia[i];
     }
 }
