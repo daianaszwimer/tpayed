@@ -20,43 +20,18 @@ struct NODO{
 
 void crearMapa(NODO *&P);	//En esta funcion creamos todos los nodos y los interconectamos como pide la consigna
 void actualizarPesos(NODO *&actual, NODO *&adyacente, int i);
+void dijkstra(NODO *&puntero, NODO *camino[9], int j);
 
 int main(){
-	int i=0;
 	srand(time(NULL));		//Basamos el random en la hora actual
 	NODO *puntero=NULL;		//Puntero que va a ir apuntando a cada colegio a medida que avanzemos por el camino
 	crearMapa(puntero);
 	NODO *camino[9];
-	NODO *sgte1;
-	NODO *sgte2;
 	
 	camino[0] = puntero;
 	
 	for(int j=1;j<3;j++){
-	
-		sgte1 = puntero->adyacente[i];
-		sgte2 = puntero->adyacente[i+1];
-	
-		while(puntero->adyacente[i]!=NULL){
-			actualizarPesos(puntero, puntero->adyacente[i], i);
-			i++;
-		}
-		
-		i=0;
-	
-		while(sgte2!=NULL){
-			if(sgte1->pesoAcumulado < sgte2->pesoAcumulado){
-				camino[j] = sgte1;
-			}else{
-				camino[j] = sgte2;
-			}
-			i++;
-			sgte1 = puntero->adyacente[i];
-			sgte2 = puntero->adyacente[i+1];
-		}
-	
-		//puntero = camino[j];
-		i=0;
+		dijkstra(puntero, camino, j);
 	}
 	
 	/*i=0;
@@ -192,4 +167,34 @@ void actualizarPesos(NODO *&actual, NODO *&adyacente, int i){
     if(actual->pesoAcumulado + actual->distancia[i] < adyacente->pesoAcumulado){
         adyacente->pesoAcumulado = actual->pesoAcumulado + actual->distancia[i];
     }
+}
+
+void dijkstra(NODO *&puntero, NODO *camino[9], int j){	
+	int i = 0;
+	NODO *sgte1;
+	NODO *sgte2;
+			
+	sgte1 = puntero->adyacente[i];
+	sgte2 = puntero->adyacente[i+1];
+	
+	while(puntero->adyacente[i]!=NULL){
+		actualizarPesos(puntero, puntero->adyacente[i], i);
+		i++;
+	}
+		
+	i=0;
+	
+	while(sgte2!=NULL){
+		if(sgte1->pesoAcumulado < sgte2->pesoAcumulado){
+			camino[j] = sgte1;
+		}else{
+			camino[j] = sgte2;
+		}
+		i++;
+		sgte1 = puntero->adyacente[i];
+		sgte2 = puntero->adyacente[i+1];
+	}
+	
+	//puntero = camino[j];
+	i=0;
 }
