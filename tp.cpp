@@ -5,7 +5,7 @@
 #include<time.h>		//el random se basa en la hora actual
 
 #define VEL 40 			//Velocidad promedio del movil
-#define INF 1000
+#define INF 1000		//Definimos "Infinito" para el valor inicial de los pesos
 
 using namespace std;
 
@@ -14,32 +14,25 @@ struct NODO{
 	NODO *adyacente[4];		//Vector de punteros que apuntan a los colegios siguientes
 	int distancia[4];		//Distancia entre colegios (en cuadras)
 	float demora[4];		//Demora entre colegios
-	bool etiqueta;
-	float pesoAcumulado;
+	bool etiqueta;			//Va a estar en true si ya pasamos por ese colegio, caso contrario, false
+	float pesoAcumulado;	//Distancia + demora + peso anterior
 };
 
 void crearMapa(NODO *&P);	//En esta funcion creamos todos los nodos y los interconectamos como pide la consigna
-void actualizarPesos(NODO *&actual, NODO *&adyacente, int i);
-void dijkstra(NODO *&puntero, NODO *camino[9], int j);
+void actualizarPesos(NODO *&actual, NODO *&adyacente, int i);		//Actualizamos los pesos de los vertices adyacentes de a donde apunta el puntero
+void dijkstra(NODO *&puntero, NODO *camino[9], int j);				//Compara los pesos de los adyacentes, y actualiza el lugar a donde apunta el puntero
 
 int main(){
 	srand(time(NULL));		//Basamos el random en la hora actual
 	NODO *puntero=NULL;		//Puntero que va a ir apuntando a cada colegio a medida que avanzemos por el camino
 	crearMapa(puntero);
-	NODO *camino[9];
+	NODO *camino[9];		//Esta variable es la que vamos a mostrar por pantalla con el recorrido que hay que hacer
 	
 	camino[0] = puntero;
 	
-	for(int j=1;j<3;j++){
+	for(int j=1;j<3;j++){	
 		dijkstra(puntero, camino, j);
 	}
-	
-	/*i=0;
-	cout<<puntero->pesoAcumulado<<endl;
-	while(puntero->adyacente[i]!=NULL){
-		cout<<puntero->adyacente[i]->pesoAcumulado<<endl;
-		i++;
-	}*/
 	
 	cout<<"El camino es:"<<endl;
 	for(int k=0;k<3;k++){
@@ -170,7 +163,7 @@ void actualizarPesos(NODO *&actual, NODO *&adyacente, int i){
 }
 
 void dijkstra(NODO *&puntero, NODO *camino[9], int j){	
-	int i = 0;
+	int i=0;
 	NODO *sgte1;
 	NODO *sgte2;
 			
@@ -196,5 +189,4 @@ void dijkstra(NODO *&puntero, NODO *camino[9], int j){
 	}
 	
 	//puntero = camino[j];
-	i=0;
 }
