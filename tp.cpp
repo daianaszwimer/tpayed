@@ -31,7 +31,7 @@ int main(){
 	camino[0] = puntero;
 	
 	for(int j=1;j<3;j++){	
-		dijkstra(puntero, camino, j);
+		dijkstra(puntero, camino, j);	
 	}
 	
 	cout<<"El camino es:"<<endl;
@@ -162,31 +162,34 @@ void actualizarPesos(NODO *&actual, NODO *&adyacente, int i){
     }
 }
 
-void dijkstra(NODO *&puntero, NODO *camino[9], int j){	
+void dijkstra(NODO *&P, NODO *camino[9], int j){	
 	int i=0;
-	NODO *sgte1;
-	NODO *sgte2;
-			
-	sgte1 = puntero->adyacente[i];
-	sgte2 = puntero->adyacente[i+1];
+	NODO *sgte;
 	
-	while(puntero->adyacente[i]!=NULL){
-		actualizarPesos(puntero, puntero->adyacente[i], i);
+	while(P->adyacente[i]!=NULL){
+		actualizarPesos(P, P->adyacente[i], i);
 		i++;
 	}
 		
 	i=0;
+	while(P->adyacente[i]->etiqueta==true){
+		i++;
+	}
+	camino[j] = P->adyacente[i];
+	i++;
+	sgte = P->adyacente[i];
 	
-	while(sgte2!=NULL){
-		if(sgte1->pesoAcumulado < sgte2->pesoAcumulado){
-			camino[j] = sgte1;
-		}else{
-			camino[j] = sgte2;
+	while(sgte!=NULL){
+		if(sgte->etiqueta==false){
+			if(sgte->pesoAcumulado < camino[j]->pesoAcumulado){
+				camino[j] = sgte;
+			}
 		}
 		i++;
-		sgte1 = puntero->adyacente[i];
-		sgte2 = puntero->adyacente[i+1];
+		sgte = P->adyacente[i];
 	}
 	
-	//puntero = camino[j];
+	camino[j]->etiqueta=true;
+	
+	P = camino[j];
 }
