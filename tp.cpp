@@ -29,14 +29,15 @@ int main(){
 	NODO *camino[9];		//Esta variable es la que vamos a mostrar por pantalla con el recorrido que hay que hacer
 	
 	camino[0] = puntero;
-	//while (puntero->descripcion == "Centro de Computos"){}
-	cout<< puntero->descripcion<<endl;
-	for(int j=1;j<3;j++){	
+	//int j=0;
+	//while (puntero->descripcion != "Centro de Computos"){
+	for(int j=1;j<9;j++){	
 		camino[j] = dijkstra(puntero, j);	
+	//	j++;
 	}
 	
 	cout<<"El camino es:"<<endl;
-	for(int k=0;k<3;k++){
+	for(int k=0;k<9;k++){
 		cout<<camino[k]->descripcion<<endl;
 	}
 	return 0;
@@ -165,17 +166,14 @@ void crearMapa(NODO *&P){
 
 void actualizarPesos(NODO *&actual){
 	int i = 0;
-	while(actual->adyacente[i]!=NULL){
+	while(actual->adyacente[i]!=NULL && i<4){
 		if(actual->adyacente[i]->etiqueta==false){
     		if(actual->pesoAcumulado + actual->distancia[i] < actual->adyacente[i]->pesoAcumulado){
         		actual->adyacente[i]->pesoAcumulado = actual->pesoAcumulado + actual->distancia[i];
     		}
-    		cout<<actual->adyacente[i]->descripcion<<endl;
-    		cout<<actual->adyacente[i]->pesoAcumulado<<endl;
 		}
 		i++;
 	}
-	cout<<"pesos" <<endl;
 }		
 
 NODO* dijkstra(NODO *&P, int j){	
@@ -184,19 +182,14 @@ NODO* dijkstra(NODO *&P, int j){
 	NODO *camino;
 	
 	actualizarPesos(P);
-	cout<<"rompe????"<<endl;
 	for (int h=0; h<4; h++){
 		if(P->adyacente[i]->etiqueta==true){
 			i++;
-			cout<<"rompe!!!!!"<<endl;
-			cout<<i <<endl;
 		}
 	}
 	camino = P->adyacente[i];
 	sgte = P->adyacente[i+1];
-		
-	
-	while(sgte!=NULL){
+	while(sgte!=NULL && i<4){
 		if(sgte->etiqueta==false){
 			if(sgte->pesoAcumulado < camino->pesoAcumulado){
 				camino = sgte;
