@@ -19,8 +19,8 @@ struct NODO{
 };
 
 void crearMapa(NODO *&P);	//En esta funcion creamos todos los nodos y los interconectamos como pide la consigna
-void actualizarPesos(NODO *&actual, NODO *&adyacente, int i);		//Actualizamos los pesos de los vertices adyacentes de a donde apunta el puntero
-void dijkstra(NODO *&puntero, NODO *camino[9], int j);				//Compara los pesos de los adyacentes, y actualiza el lugar a donde apunta el puntero
+void actualizarPesos(NODO *&actual, int i);		//Actualizamos los pesos de los vertices adyacentes de a donde apunta el puntero
+NODO* dijkstra(NODO *&puntero, int j);				//Compara los pesos de los adyacentes, y actualiza el lugar a donde apunta el puntero
 
 int main(){
 	srand(time(NULL));		//Basamos el random en la hora actual
@@ -30,15 +30,14 @@ int main(){
 	
 	camino[0] = puntero;
 	
-	for(int j=1;j<3;j++){	
-		dijkstra(puntero, camino, j);	
+	for(int j=1;j<2;j++){	
+		camino[j] = dijkstra(puntero, j);	
 	}
 	
 	cout<<"El camino es:"<<endl;
-	for(int k=0;k<3;k++){
+	for(int k=0;k<2;k++){
 		cout<<camino[k]->descripcion<<endl;
 	}
-
 	return 0;
 }
 
@@ -109,8 +108,8 @@ void crearMapa(NODO *&P){
 	C7->distancia[0]=C5->distancia[3];	//Distancia de C7 a C5
 	C7->distancia[1]=C6->distancia[1];	//Distancia de C7 a C6
 	C7->distancia[2]=3;					//Distancia de C7 a CC
-	CC->distancia[1]=C6->distancia[2];	//Distancia de CC a C6
-	CC->distancia[2]=C7->distancia[2];	//Distancia de CC a C7
+	CC->distancia[0]=C6->distancia[2];	//Distancia de CC a C6
+	CC->distancia[1]=C7->distancia[2];	//Distancia de CC a C7
 	
 	for(int i=0;i<4;i++){
 		CL->demora[i]=((float) rand() / (RAND_MAX))*VEL;									
@@ -126,9 +125,12 @@ void crearMapa(NODO *&P){
 		
 	CL->adyacente[0]=C1;				//Conexion CL-C1
 	CL->adyacente[1]=C2;				//Conexion CL-C2
+	CL->adyacente[2]=NULL;
+	CL->adyacente[3]=NULL;
 	C1->adyacente[0]=CL;				//Conexion C1-CL
 	C1->adyacente[1]=C2;				//Conexion C1-C2
 	C1->adyacente[2]=C3;				//Conexion C1-C3
+	C1->adyacente[3]=NULL;
 	C2->adyacente[0]=CL;				//Conexion C2-CL
 	C2->adyacente[1]=C1;				//Conexion C2-C1
 	C2->adyacente[2]=C3;				//Conexion C2-C3
@@ -140,6 +142,7 @@ void crearMapa(NODO *&P){
 	C4->adyacente[0]=C2;				//Conexion C4-C2
 	C4->adyacente[1]=C3;				//Conexion C4-C3
 	C4->adyacente[2]=C5;				//Conexion C4-C5
+	C4->adyacente[3]=NULL;
 	C5->adyacente[0]=C3;				//Conexion C5-C3
 	C5->adyacente[1]=C4;				//Conexion C5-C4
 	C5->adyacente[2]=C6;				//Conexion C5-C6
@@ -147,49 +150,56 @@ void crearMapa(NODO *&P){
 	C6->adyacente[0]=C5;				//Conexion C6-C5
 	C6->adyacente[1]=C7;				//Conexion C6-C7
 	C6->adyacente[2]=CC;				//Conexion C6-CC
+	C6->adyacente[3]=NULL;
 	C7->adyacente[0]=C5;				//Conexion C7-C5
 	C7->adyacente[1]=C6;				//Conexion C7-C6
 	C7->adyacente[2]=CC;				//Conexion C7-CC
-	CC->adyacente[1]=C6;				//Conexion CC-C6
-	CC->adyacente[2]=C7;				//Conexion CC-C7	
-	
+	C7->adyacente[3]=NULL;
+	CC->adyacente[0]=C6;				//Conexion CC-C6
+	CC->adyacente[1]=C7;				//Conexion CC-C7	
+	CC->adyacente[2]=NULL;
+	CC->adyacente[3]=NULL;
 	P=CL;								//El puntero empieza en el centro de logistica
 }
 
-void actualizarPesos(NODO *&actual, NODO *&adyacente, int i){
-    if(actual->pesoAcumulado + actual->distancia[i] < adyacente->pesoAcumulado){
-        adyacente->pesoAcumulado = actual->pesoAcumulado + actual->distancia[i];
-    }
-}
+void actualizarPesos(NODO *&actual){
+	int i = 0;
+	while(actual->adyacente[i]!=NULL){
+		if(actual->adyacente[i]->etiqueta==false){
+    		if(actual->pesoAcumulado + actual->distancia[i] < actual->adyacente[i]->pesoAcumulado){
+        		actual->adyacente[i]->pesoAcumulado = actual->pesoAcumulado + actual->distancia[i];
+    		}
+		}
+	i++;
+	}
+}		
 
-void dijkstra(NODO *&P, NODO *camino[9], int j){	
+NODO* dijkstra(NODO *&P, int j){	
 	int i=0;
 	NODO *sgte;
+	NODO *camino;
 	
-	while(P->adyacente[i]!=NULL){
-		actualizarPesos(P, P->adyacente[i], i);
-		i++;
-	}
-		
-	i=0;
+	actualizarPesos(P);
+
 	while(P->adyacente[i]->etiqueta==true){
 		i++;
 	}
-	camino[j] = P->adyacente[i];
+	camino = P->adyacente[i];
 	i++;
 	sgte = P->adyacente[i];
 	
 	while(sgte!=NULL){
 		if(sgte->etiqueta==false){
-			if(sgte->pesoAcumulado < camino[j]->pesoAcumulado){
-				camino[j] = sgte;
+			if(sgte->pesoAcumulado < camino->pesoAcumulado){
+				camino = sgte;
 			}
 		}
 		i++;
 		sgte = P->adyacente[i];
 	}
 	
-	camino[j]->etiqueta=true;
+	camino->etiqueta=true;
 	
-	P = camino[j];
+	P = camino;
+	return camino;
 }
