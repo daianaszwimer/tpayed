@@ -192,7 +192,6 @@ NODO* dijkstra(NODO *&P, int j){
 	sgte = P->adyacente[i+1];
 	while(sgte!=NULL && i<4){
 		if(sgte->etiqueta==false){
-			cout << "peso del actual: "<<camino->pesoAcumulado<<" decr: "<<camino->descripcion<<" peso del siguiente: "<<sgte->pesoAcumulado<<" descr: "<<sgte->descripcion<<endl;
 			if (chequearAdyacentes(sgte, P->descripcion)){
 				adyacencia = true;
 				if(sgte->pesoAcumulado < camino->pesoAcumulado || !chequearAdyacentes(camino, P->descripcion)){
@@ -210,9 +209,7 @@ NODO* dijkstra(NODO *&P, int j){
 		//Busco entonces, el más cercano
 		i = valorInicialI;
 		sgte = P->adyacente[i+1];
-		cout<<"estoy en "<<P->descripcion<<" mi actual es "<<camino->descripcion<<" peso "<<camino->pesoAcumulado<<endl;
 		while(sgte!=NULL && i<4){
-			cout <<"hola "<<i<<endl;
 			if(sgte->etiqueta==false){
 				if(sgte->pesoAcumulado < camino->pesoAcumulado){
 					camino = sgte;
