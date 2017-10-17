@@ -5,15 +5,14 @@
 #include<time.h>		//el random se basa en la hora actual
 
 #define VEL 40 			//Velocidad promedio del movil
-#define INF 1000		//Definimos "Infinito" para el valor inicial de los pesos
+#define INF 10000		//Definimos "Infinito" para el valor inicial de los pesos
 
 using namespace std;
 
 struct NODO{
 	string descripcion;		//Descripcion para ver que colegio es
 	NODO *adyacente[4];		//Vector de punteros que apuntan a los colegios siguientes
-	int distancia[4];		//Distancia entre colegios (en cuadras)
-	float demora[4];		//Demora entre colegios
+	float distancia[4];		//Distancia entre colegios (en cuadras)
 	bool etiqueta;			//Va a estar en true si ya pasamos por ese colegio, caso contrario, false
 	float pesoAcumulado;	//Distancia + demora + peso anterior
 };
@@ -21,6 +20,7 @@ struct NODO{
 void crearMapa(NODO *&P);	//En esta funcion creamos todos los nodos y los interconectamos como pide la consigna
 void actualizarPesos(NODO *&actual, int i);		//Actualizamos los pesos de los vertices adyacentes de a donde apunta el puntero
 NODO* dijkstra(NODO *&puntero, int j);				//Compara los pesos de los adyacentes, y actualiza el lugar a donde apunta el puntero
+bool chequearAdyacentes(NODO *C, string descripcionActual);		//Devuelve true si tiene por lo menos un colegio adyacente con etiqueta=true sin contar el colegio actual
 
 int main(){
 	srand(time(NULL));		//Basamos el random en la hora actual
@@ -84,46 +84,34 @@ void crearMapa(NODO *&P){
 	C7->pesoAcumulado=INF;
 	CC->pesoAcumulado=INF;
 	
-	CL->distancia[0]=4;					//Distancia de CL a C1
-	CL->distancia[1]=2;					//Distancia de CL a C2
+	CL->distancia[0]=4+(((float) rand() / (RAND_MAX))*VEL);					//Distancia de CL a C1
+	CL->distancia[1]=2+(((float) rand() / (RAND_MAX))*VEL);					//Distancia de CL a C2
 	C1->distancia[0]=CL->distancia[0];	//Distancia de C1 a CL
-	C1->distancia[1]=3;					//Distancia de C1 a C2
-	C1->distancia[2]=4;					//Distancia de C1 a C3
+	C1->distancia[1]=3+(((float) rand() / (RAND_MAX))*VEL);					//Distancia de C1 a C2
+	C1->distancia[2]=4+(((float) rand() / (RAND_MAX))*VEL);					//Distancia de C1 a C3
 	C2->distancia[0]=CL->distancia[1];	//Distancia de C2 a CL
 	C2->distancia[1]=C1->distancia[1];	//Distancia de C2 a C1
-	C2->distancia[2]=5;					//Distancia de C2 a C3
-	C2->distancia[3]=10;				//Distancia de C2 a C4
+	C2->distancia[2]=5+(((float) rand() / (RAND_MAX))*VEL);					//Distancia de C2 a C3
+	C2->distancia[3]=10+(((float) rand() / (RAND_MAX))*VEL);				//Distancia de C2 a C4
 	C3->distancia[0]=C1->distancia[2];	//Distancia de C3 a C1
 	C3->distancia[1]=C2->distancia[2];	//Distancia de C3 a C2
-	C3->distancia[2]=1;					//Distancia de C3 a C4
-	C3->distancia[3]=8;					//Distancia de C3 a C5
+	C3->distancia[2]=1+(((float) rand() / (RAND_MAX))*VEL);					//Distancia de C3 a C4
+	C3->distancia[3]=8+(((float) rand() / (RAND_MAX))*VEL);					//Distancia de C3 a C5
 	C4->distancia[0]=C2->distancia[3];	//Distancia de C4 a C2
 	C4->distancia[1]=C3->distancia[2];	//Distancia de C4 a C3
-	C4->distancia[2]=9;					//Distancia de C4 a C5
+	C4->distancia[2]=9+(((float) rand() / (RAND_MAX))*VEL);					//Distancia de C4 a C5
 	C5->distancia[0]=C3->distancia[3];	//Distancia de C5 a C3
 	C5->distancia[1]=C4->distancia[2];	//Distancia de C5 a C4
-	C5->distancia[2]=5;					//Distancia de C5 a C6
-	C5->distancia[3]=6;					//Distancia de C5 a C7
+	C5->distancia[2]=5+(((float) rand() / (RAND_MAX))*VEL);					//Distancia de C5 a C6
+	C5->distancia[3]=6+(((float) rand() / (RAND_MAX))*VEL);					//Distancia de C5 a C7
 	C6->distancia[0]=C5->distancia[2];	//Distancia de C6 a C5
-	C6->distancia[1]=4;					//Distancia de C6 a C7
-	C6->distancia[2]=2;					//Distancia de C6 a CC
+	C6->distancia[1]=4+(((float) rand() / (RAND_MAX))*VEL);					//Distancia de C6 a C7
+	C6->distancia[2]=2+(((float) rand() / (RAND_MAX))*VEL);					//Distancia de C6 a CC
 	C7->distancia[0]=C5->distancia[3];	//Distancia de C7 a C5
 	C7->distancia[1]=C6->distancia[1];	//Distancia de C7 a C6
-	C7->distancia[2]=3;					//Distancia de C7 a CC
+	C7->distancia[2]=3+(((float) rand() / (RAND_MAX))*VEL);					//Distancia de C7 a CC
 	CC->distancia[0]=C6->distancia[2];	//Distancia de CC a C6
 	CC->distancia[1]=C7->distancia[2];	//Distancia de CC a C7
-	
-	for(int i=0;i<4;i++){
-		CL->demora[i]=((float) rand() / (RAND_MAX))*VEL;									
-		C1->demora[i]=((float) rand() / (RAND_MAX))*VEL;						
-		C2->demora[i]=((float) rand() / (RAND_MAX))*VEL;		
-		C3->demora[i]=((float) rand() / (RAND_MAX))*VEL;		
-		C4->demora[i]=((float) rand() / (RAND_MAX))*VEL;					
-		C5->demora[i]=((float) rand() / (RAND_MAX))*VEL;					
-		C6->demora[i]=((float) rand() / (RAND_MAX))*VEL;						
-		C7->demora[i]=((float) rand() / (RAND_MAX))*VEL;						
-		CC->demora[i]=((float) rand() / (RAND_MAX))*VEL;
-	}	
 		
 	CL->adyacente[0]=C1;				//Conexion CL-C1
 	CL->adyacente[1]=C2;				//Conexion CL-C2
@@ -166,7 +154,7 @@ void crearMapa(NODO *&P){
 
 void actualizarPesos(NODO *&actual){
 	int i = 0;
-	while(actual->adyacente[i]!=NULL && i<4){
+	while(actual->adyacente[i]!= NULL && i<4){
 		if(actual->adyacente[i]->etiqueta==false){
     		if(actual->pesoAcumulado + actual->distancia[i] < actual->adyacente[i]->pesoAcumulado){
         		actual->adyacente[i]->pesoAcumulado = actual->pesoAcumulado + actual->distancia[i];
@@ -174,13 +162,24 @@ void actualizarPesos(NODO *&actual){
 		}
 		i++;
 	}
-}		
+}
+
+bool chequearAdyacentes(NODO *C, string descripcionActual){
+	int i = 0;
+	while(C->adyacente[i]!= NULL && i<4){
+		if (C->adyacente[i]->etiqueta == true && C->adyacente[i]->descripcion != descripcionActual){
+			return true;
+		}
+		i++;
+	}
+	return false;
+}
 
 NODO* dijkstra(NODO *&P, int j){	
 	int i=0;
 	NODO *sgte;
 	NODO *camino;
-	
+	bool adyacencia = false;
 	actualizarPesos(P);
 	for (int h=0; h<4; h++){
 		if(P->adyacente[i]->etiqueta==true){
@@ -191,14 +190,31 @@ NODO* dijkstra(NODO *&P, int j){
 	sgte = P->adyacente[i+1];
 	while(sgte!=NULL && i<4){
 		if(sgte->etiqueta==false){
-			if(sgte->pesoAcumulado < camino->pesoAcumulado){
-				camino = sgte;
+			if (chequearAdyacentes(sgte, P->descripcion)){
+				adyacencia = true;
+				if(sgte->pesoAcumulado < camino->pesoAcumulado || !chequearAdyacentes(camino, P->descripcion)){
+					//chequeo que camino tenga algún centro adyacente porque cuando lo seteo por default
+					//nada me garantiza que se cumpla
+					camino = sgte;
+				}
 			}
 		}
 		i++;
 		sgte = P->adyacente[i];
 	}
-	
+	if (!adyacencia){
+		//No hay ningún centro cuyos adyacentes hayan sido visitados por lo menos una vez 
+		//Busco entonces, el más cercano
+		while(sgte!=NULL && i<4){
+			if(sgte->etiqueta==false){
+				if(sgte->pesoAcumulado < camino->pesoAcumulado){
+					camino = sgte;
+				}
+			}
+			i++;
+			sgte = P->adyacente[i];
+		}
+	}
 	camino->etiqueta=true;
 	
 	P = camino;
