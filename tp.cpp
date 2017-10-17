@@ -180,16 +180,19 @@ NODO* dijkstra(NODO *&P, int j){
 	NODO *sgte;
 	NODO *camino;
 	bool adyacencia = false;
+	int valorInicialI = 0; //guardo el valor de i en caso de que no haya ningún centro con centro adyacente visitado
 	actualizarPesos(P);
 	for (int h=0; h<4; h++){
 		if(P->adyacente[i]->etiqueta==true){
 			i++;
 		}
 	}
+	valorInicialI = i;
 	camino = P->adyacente[i];
 	sgte = P->adyacente[i+1];
 	while(sgte!=NULL && i<4){
 		if(sgte->etiqueta==false){
+			cout << "peso del actual: "<<camino->pesoAcumulado<<" decr: "<<camino->descripcion<<" peso del siguiente: "<<sgte->pesoAcumulado<<" descr: "<<sgte->descripcion<<endl;
 			if (chequearAdyacentes(sgte, P->descripcion)){
 				adyacencia = true;
 				if(sgte->pesoAcumulado < camino->pesoAcumulado || !chequearAdyacentes(camino, P->descripcion)){
@@ -199,13 +202,17 @@ NODO* dijkstra(NODO *&P, int j){
 				}
 			}
 		}
-		i++;
 		sgte = P->adyacente[i];
+		i++;
 	}
 	if (!adyacencia){
 		//No hay ningún centro cuyos adyacentes hayan sido visitados por lo menos una vez 
 		//Busco entonces, el más cercano
+		i = valorInicialI;
+		sgte = P->adyacente[i+1];
+		cout<<"estoy en "<<P->descripcion<<" mi actual es "<<camino->descripcion<<" peso "<<camino->pesoAcumulado<<endl;
 		while(sgte!=NULL && i<4){
+			cout <<"hola "<<i<<endl;
 			if(sgte->etiqueta==false){
 				if(sgte->pesoAcumulado < camino->pesoAcumulado){
 					camino = sgte;
