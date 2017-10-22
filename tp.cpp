@@ -19,7 +19,6 @@ struct NODO{
 void crearMapa(NODO *&P, float velocidad);	//En esta funcion creamos todos los nodos y los interconectamos como pide la consigna
 void actualizarPesos(NODO *&actual, int i);		//Actualizamos los pesos de los vertices adyacentes de a donde apunta el puntero
 NODO* dijkstra(NODO *&puntero, int j);				//Compara los pesos de los adyacentes, y actualiza el lugar a donde apunta el puntero
-bool chequearAdyacentes(NODO *C, string descripcionActual);		//Devuelve true si tiene por lo menos un colegio adyacente con etiqueta=true sin contar el colegio actual
 
 int main(){
 	float velocidad=0;
@@ -167,60 +166,26 @@ void actualizarPesos(NODO *&actual){
 	}
 }
 
-bool chequearAdyacentes(NODO *C, string descripcionActual){
-	int i = 0;
-	while(C->adyacente[i]!= NULL && i<4){
-		if (C->adyacente[i]->etiqueta == true && C->adyacente[i]->descripcion != descripcionActual){
-			return true;
-		}
-		i++;
-	}
-	return false;
-}
-
 NODO* dijkstra(NODO *&P, int j){	
 	int i=0;
 	NODO *sgte;
 	NODO *camino;
-	bool adyacencia = false;
-	int valorInicialI = 0; //guardo el valor de i en caso de que no haya ningún centro con centro adyacente visitado
 	actualizarPesos(P);
 	for (int h=0; h<4; h++){
 		if(P->adyacente[i]->etiqueta==true){
 			i++;
 		}
 	}
-	valorInicialI = i;
 	camino = P->adyacente[i];
 	sgte = P->adyacente[i+1];
 	while(sgte!=NULL && i<4){
 		if(sgte->etiqueta==false){
-			if (chequearAdyacentes(sgte, P->descripcion)){
-				adyacencia = true;
-				if(sgte->pesoAcumulado < camino->pesoAcumulado || !chequearAdyacentes(camino, P->descripcion)){
-					//chequeo que camino tenga algún centro adyacente porque cuando lo seteo por default
-					//nada me garantiza que se cumpla
-					camino = sgte;
-				}
+			if(sgte->pesoAcumulado < camino->pesoAcumulado){
+				camino = sgte;
 			}
 		}
-		sgte = P->adyacente[i];
 		i++;
-	}
-	if (!adyacencia){
-		//No hay ningún centro cuyos adyacentes hayan sido visitados por lo menos una vez 
-		//Busco entonces, el más cercano
-		i = valorInicialI;
-		sgte = P->adyacente[i+1];
-		while(sgte!=NULL && i<4){
-			if(sgte->etiqueta==false){
-				if(sgte->pesoAcumulado < camino->pesoAcumulado){
-					camino = sgte;
-				}
-			}
-			i++;
-			sgte = P->adyacente[i];
-		}
+		sgte = P->adyacente[i];
 	}
 	camino->etiqueta=true;
 	
