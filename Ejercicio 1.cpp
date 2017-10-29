@@ -27,7 +27,6 @@ int main(){
 	NODO *puntero=NULL;		//Puntero que va a ir apuntando a cada colegio a medida que avanzemos por el camino
 	NODO *inicial;			//inicial va a apuntar a Centro de Logistica
 	NODO *final;			//final va a apuntar a Centro de Computos
-	bool pasePorTodos = false;
 	crearMapa(puntero,inicial,final);
 	NODO *camino[9];		//Esta variable es la que vamos a mostrar por pantalla con el recorrido que hay que hacer
 	int i=0;
@@ -121,7 +120,7 @@ void crearMapa(NODO *&P, NODO *&inicial, NODO *&final){
 	CL->distancia[0]=4;		//Distancia de CL a C1
 	CL->distancia[1]=2;		//Distancia de CL a C2
 	C1->distancia[0]=CL->distancia[0];							//Distancia de C1 a CL
-	C1->distancia[1]=3;	//Distancia de C1 a C2
+	C1->distancia[1]=3;	//Distancia de C1 a C3
 	C1->distancia[2]=4;		//Distancia de C1 a C3
 	C2->distancia[0]=CL->distancia[1];							//Distancia de C2 a CL
 	C2->distancia[1]=C1->distancia[1];							//Distancia de C2 a C1
