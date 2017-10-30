@@ -186,42 +186,55 @@ void actualizarPesos(NODO *&actual){
 	bool adyacencia = false;
 	cout<<"actual "<<actual->descripcion<<endl;
 	while(actual->adyacente[i]!= NULL && i<4){
-		if(actual->pesoAcumulado + actual->distancia[i] < actual->adyacente[i]->pesoAcumulado){
-			cout<<"CERCANO "<<actual->adyacente[i]->descripcion<<endl;
-			//fijarse que no haya ninguno sin visitar que no tenga adyacencia
-			int j = 0;
-			while(actual->adyacente[j]!= NULL && j<4){
-				if (i!=j && !actual->adyacente[j]->etiqueta){
-					cout<<"estoy en "<<actual->adyacente[j]->descripcion<<endl;
-					int h = 0;
-	    			adyacencia = false;
-	    			sinVisitar[j] = j;
-					while(actual->adyacente[i]->adyacente[h]!= NULL && h<4){
-						if (actual->adyacente[i]->adyacente[h]->descripcion == actual->adyacente[j]->descripcion){
-							actual->adyacente[i]->pesoAcumulado = actual->pesoAcumulado + actual->distancia[i];
-    						actual->adyacente[i]->anterior = actual;
-    						adyacencia = true;
+		//hack porque en 4 y 7 en el original no se setea nada
+		//y rompe
+		//solo para probar hipotesis
+		if (actual->descripcion != "Colegio Nro. 4" && actual->descripcion != "Colegio Nro. 7"){
+			cout<<"bobis"<<endl;
+			if(actual->pesoAcumulado + actual->distancia[i] < actual->adyacente[i]->pesoAcumulado){
+				cout<<"CERCANO "<<actual->adyacente[i]->descripcion<<endl;
+				//fijarse que no haya ninguno sin visitar que no tenga adyacencia
+				int j = 0;
+				while(actual->adyacente[j]!= NULL && j<4){
+					if (i!=j && !actual->adyacente[j]->etiqueta){
+						cout<<"estoy en "<<actual->adyacente[j]->descripcion<<endl;
+						int h = 0;
+		    			adyacencia = false;
+		    			sinVisitar[j] = j;
+						while(actual->adyacente[i]->adyacente[h]!= NULL && h<4){
+							if (actual->adyacente[i]->adyacente[h] != actual){
+						cout<<"estoy EN "<<actual->adyacente[i]->adyacente[h]->descripcion<<endl;
+								if (actual->adyacente[i]->adyacente[h]->descripcion == actual->adyacente[j]->descripcion){
+									actual->adyacente[i]->pesoAcumulado = actual->pesoAcumulado + actual->distancia[i];
+		    						actual->adyacente[i]->anterior = actual;
+		    						adyacencia = true;
+								}
+							}
+							h++;
 						}
-						h++;
 					}
+					j++;
 				}
-				j++;
 			}
 		}
+		
 		i++;
 	}
-	//significa que no encontro en el mas optimo adyacencia con los aun no visitados
-	if (!adyacencia){
-		//busco entre los no visitados el más óptimo
-		for (int k=0; k<4; k++){
-			if (sinVisitar[k] != 0 && sinVisitar[k]>0){
-				if(actual->pesoAcumulado + actual->distancia[sinVisitar[k]] < actual->adyacente[sinVisitar[k]]->pesoAcumulado){
-					actual->adyacente[sinVisitar[k]]->pesoAcumulado = actual->pesoAcumulado + actual->distancia[sinVisitar[k]];
-    				actual->adyacente[sinVisitar[k]]->anterior = actual;
+	if (actual->descripcion != "Colegio Nro. 4" && actual->descripcion != "Colegio Nro. 7"){
+
+		//significa que no encontro en el mas optimo adyacencia con los aun no visitados
+		if (!adyacencia){
+			//busco entre los no visitados el más óptimo
+			for (int k=0; k<4; k++){
+				if (sinVisitar[k] != 0 && sinVisitar[k]>0){
+					if(actual->pesoAcumulado + actual->distancia[sinVisitar[k]] < actual->adyacente[sinVisitar[k]]->pesoAcumulado){
+						actual->adyacente[sinVisitar[k]]->pesoAcumulado = actual->pesoAcumulado + actual->distancia[sinVisitar[k]];
+	    				actual->adyacente[sinVisitar[k]]->anterior = actual;
+					}
+
 				}
 
 			}
-
 		}
 	}
 }
