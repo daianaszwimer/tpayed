@@ -182,12 +182,47 @@ void crearMapa(NODO *&P, NODO *&inicial, NODO *&final){
 
 void actualizarPesos(NODO *&actual){
 	int i = 0;
+	int sinVisitar[4];
+	bool adyacencia = false;
+	cout<<"actual "<<actual->descripcion<<endl;
 	while(actual->adyacente[i]!= NULL && i<4){
-    		if(actual->pesoAcumulado + actual->distancia[i] < actual->adyacente[i]->pesoAcumulado){
-        		actual->adyacente[i]->pesoAcumulado = actual->pesoAcumulado + actual->distancia[i];
-        		actual->adyacente[i]->anterior = actual;
-    		}
+		if(actual->pesoAcumulado + actual->distancia[i] < actual->adyacente[i]->pesoAcumulado){
+			cout<<"CERCANO "<<actual->adyacente[i]->descripcion<<endl;
+			//fijarse que no haya ninguno sin visitar que no tenga adyacencia
+			int j = 0;
+			while(actual->adyacente[j]!= NULL && j<4){
+				if (i!=j && !actual->adyacente[j]->etiqueta){
+					cout<<"estoy en "<<actual->adyacente[j]->descripcion<<endl;
+					int h = 0;
+	    			adyacencia = false;
+	    			sinVisitar[j] = j;
+					while(actual->adyacente[i]->adyacente[h]!= NULL && h<4){
+						if (actual->adyacente[i]->adyacente[h]->descripcion == actual->adyacente[j]->descripcion){
+							actual->adyacente[i]->pesoAcumulado = actual->pesoAcumulado + actual->distancia[i];
+    						actual->adyacente[i]->anterior = actual;
+    						adyacencia = true;
+						}
+						h++;
+					}
+				}
+				j++;
+			}
+		}
 		i++;
+	}
+	//significa que no encontro en el mas optimo adyacencia con los aun no visitados
+	if (!adyacencia){
+		//busco entre los no visitados el más óptimo
+		for (int k=0; k<4; k++){
+			if (sinVisitar[k] != 0 && sinVisitar[k]>0){
+				if(actual->pesoAcumulado + actual->distancia[sinVisitar[k]] < actual->adyacente[sinVisitar[k]]->pesoAcumulado){
+					actual->adyacente[sinVisitar[k]]->pesoAcumulado = actual->pesoAcumulado + actual->distancia[sinVisitar[k]];
+    				actual->adyacente[sinVisitar[k]]->anterior = actual;
+				}
+
+			}
+
+		}
 	}
 }
 
@@ -207,6 +242,3 @@ void dijkstra(NODO *&P){
 	
 	P = camino;	
 }
-
-
-
