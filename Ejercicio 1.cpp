@@ -5,7 +5,6 @@
 #include<time.h>		//el random se basa en la hora actual
 
 #define INF 10000		//Definimos "Infinito" para el valor inicial de los pesos
-#define VEL 40
 
 using namespace std;
 
@@ -18,35 +17,39 @@ struct NODO{
 	NODO *anterior;			//Que nodo era el anterior cuando se actualizo el peso
 };
 
-void crearMapa(NODO *&P, NODO *&inicial, NODO *&final);	//En esta funcion creamos todos los nodos y los interconectamos como pide la consigna
+void crearGrafo(NODO *&P, NODO *&inicial, NODO *&final);	//En esta funcion creamos todos los nodos y los interconectamos como pide la consigna
 void actualizarPesos(NODO *&actual, int i);		//Actualizamos los pesos de los vertices adyacentes de a donde apunta el puntero
-void dijkstra(NODO *&puntero);				//Compara los pesos de los adyacentes, y actualiza el lugar a donde apunta el puntero
+void dijkstra(NODO *&puntero);					//Actualiza el lugar a donde apunta el puntero, para actualizar los pesos
 
 int main(){
+	int i=0;
 	srand(time(NULL));		//Basamos el random en la hora actual
 	NODO *puntero=NULL;		//Puntero que va a ir apuntando a cada colegio a medida que avanzemos por el camino
 	NODO *inicial;			//inicial va a apuntar a Centro de Logistica
 	NODO *final;			//final va a apuntar a Centro de Computos
-	crearMapa(puntero,inicial,final);
 	NODO *camino[9];		//Esta variable es la que vamos a mostrar por pantalla con el recorrido que hay que hacer
-	int i=0;
+	
+	crearGrafo(puntero, inicial, final);		//Creamos el grafo como pide la consigna
+	
 	while(puntero->descripcion!="Centro de Computos"){
-		dijkstra(puntero);	//Dijkstra lo unico que va a hacer es recorrer los nodos como habiamos hecho antes, y actualiza los pesos
-	}
-	cout<<"El camino es:"<<endl;
+		dijkstra(puntero);	//Dijkstra va a recorrer los nodos y actualizar los pesos segun corresponda
+	}	
 	while(inicial!=final){
 		camino[i] = final;
-		cout<<camino[i]->descripcion<<endl;
 		final = final->anterior;
 		i++;
 	}
 	camino[i] = final;
-	cout<<camino[i]->descripcion<<endl;
+	cout<<"El camino es:"<<endl;
 	
+	while(i>=0){
+		cout<<camino[i]->descripcion<<endl;
+		i--;
+	}
 	return 0;
 }
 
-void crearMapa(NODO *&P, NODO *&inicial, NODO *&final){
+void crearGrafo(NODO *&P, NODO *&inicial, NODO *&final){
 	NODO *CL = new NODO();
 	NODO *C1 = new NODO();
 	NODO *C2 = new NODO();
@@ -56,6 +59,11 @@ void crearMapa(NODO *&P, NODO *&inicial, NODO *&final){
 	NODO *C6 = new NODO();
 	NODO *C7 = new NODO();
 	NODO *CC = new NODO();
+	float velocidad;
+	
+	cout<<"Ingrese la velocidad promedio (en km/h)"<<endl;
+	cin>>velocidad;
+	cout<<endl;
 	
 	CL->descripcion="Centro de Logistica";
 	C1->descripcion="Colegio Nro. 1";
@@ -87,65 +95,35 @@ void crearMapa(NODO *&P, NODO *&inicial, NODO *&final){
 	C7->pesoAcumulado=INF;
 	CC->pesoAcumulado=INF;
 	
-	/*CL->distancia[0]=4+(((float) rand() / (RAND_MAX))*VEL);		//Distancia de CL a C1
-	CL->distancia[1]=2+(((float) rand() / (RAND_MAX))*VEL);		//Distancia de CL a C2
-	C1->distancia[0]=CL->distancia[0];							//Distancia de C1 a CL
-	C1->distancia[1]=3+(((float) rand() / (RAND_MAX))*VEL);		//Distancia de C1 a C2
-	C1->distancia[2]=4+(((float) rand() / (RAND_MAX))*VEL);		//Distancia de C1 a C3
-	C2->distancia[0]=CL->distancia[1];							//Distancia de C2 a CL
-	C2->distancia[1]=C1->distancia[1];							//Distancia de C2 a C1
-	C2->distancia[2]=5+(((float) rand() / (RAND_MAX))*VEL);		//Distancia de C2 a C3
-	C2->distancia[3]=10+(((float) rand() / (RAND_MAX))*VEL);	//Distancia de C2 a C4
-	C3->distancia[0]=C1->distancia[2];							//Distancia de C3 a C1
-	C3->distancia[1]=C2->distancia[2];							//Distancia de C3 a C2
-	C3->distancia[2]=1+(((float) rand() / (RAND_MAX))*VEL);		//Distancia de C3 a C4
-	C3->distancia[3]=8+(((float) rand() / (RAND_MAX))*VEL);		//Distancia de C3 a C5
-	C4->distancia[0]=C2->distancia[3];							//Distancia de C4 a C2
-	C4->distancia[1]=C3->distancia[2];							//Distancia de C4 a C3
-	C4->distancia[2]=9+(((float) rand() / (RAND_MAX))*VEL);		//Distancia de C4 a C5
-	C5->distancia[0]=C3->distancia[3];							//Distancia de C5 a C3
-	C5->distancia[1]=C4->distancia[2];							//Distancia de C5 a C4
-	C5->distancia[2]=5+(((float) rand() / (RAND_MAX))*VEL);		//Distancia de C5 a C6
-	C5->distancia[3]=6+(((float) rand() / (RAND_MAX))*VEL);		//Distancia de C5 a C7
-	C6->distancia[0]=C5->distancia[2];							//Distancia de C6 a C5
-	C6->distancia[1]=4+(((float) rand() / (RAND_MAX))*VEL);		//Distancia de C6 a C7
-	C6->distancia[2]=2+(((float) rand() / (RAND_MAX))*VEL);		//Distancia de C6 a CC
-	C7->distancia[0]=C5->distancia[3];							//Distancia de C7 a C5
-	C7->distancia[1]=C6->distancia[1];							//Distancia de C7 a C6
-	C7->distancia[2]=3+(((float) rand() / (RAND_MAX))*VEL);		//Distancia de C7 a CC
-	CC->distancia[0]=C6->distancia[2];							//Distancia de CC a C6
-	CC->distancia[1]=C7->distancia[2];							//Distancia de CC a C7
-	*/
+	CL->distancia[0]=4+(((float) rand() / (RAND_MAX))*velocidad);		//Distancia de CL a C1
+	CL->distancia[1]=2+(((float) rand() / (RAND_MAX))*velocidad);		//Distancia de CL a C2
+	C1->distancia[0]=CL->distancia[0];									//Distancia de C1 a CL
+	C1->distancia[1]=3+(((float) rand() / (RAND_MAX))*velocidad);		//Distancia de C1 a C2
+	C1->distancia[2]=4+(((float) rand() / (RAND_MAX))*velocidad);		//Distancia de C1 a C3
+	C2->distancia[0]=CL->distancia[1];									//Distancia de C2 a CL
+	C2->distancia[1]=C1->distancia[1];									//Distancia de C2 a C1
+	C2->distancia[2]=5+(((float) rand() / (RAND_MAX))*velocidad);		//Distancia de C2 a C3
+	C2->distancia[3]=10+(((float) rand() / (RAND_MAX))*velocidad);		//Distancia de C2 a C4
+	C3->distancia[0]=C1->distancia[2];									//Distancia de C3 a C1
+	C3->distancia[1]=C2->distancia[2];									//Distancia de C3 a C2
+	C3->distancia[2]=1+(((float) rand() / (RAND_MAX))*velocidad);		//Distancia de C3 a C4
+	C3->distancia[3]=8+(((float) rand() / (RAND_MAX))*velocidad);		//Distancia de C3 a C5
+	C4->distancia[0]=C2->distancia[3];									//Distancia de C4 a C2
+	C4->distancia[1]=C3->distancia[2];									//Distancia de C4 a C3
+	C4->distancia[2]=9+(((float) rand() / (RAND_MAX))*velocidad);		//Distancia de C4 a C5
+	C5->distancia[0]=C3->distancia[3];									//Distancia de C5 a C3
+	C5->distancia[1]=C4->distancia[2];									//Distancia de C5 a C4
+	C5->distancia[2]=5+(((float) rand() / (RAND_MAX))*velocidad);		//Distancia de C5 a C6
+	C5->distancia[3]=6+(((float) rand() / (RAND_MAX))*velocidad);		//Distancia de C5 a C7
+	C6->distancia[0]=C5->distancia[2];									//Distancia de C6 a C5
+	C6->distancia[1]=4+(((float) rand() / (RAND_MAX))*velocidad);		//Distancia de C6 a C7
+	C6->distancia[2]=2+(((float) rand() / (RAND_MAX))*velocidad);		//Distancia de C6 a CC
+	C7->distancia[0]=C5->distancia[3];									//Distancia de C7 a C5
+	C7->distancia[1]=C6->distancia[1];									//Distancia de C7 a C6
+	C7->distancia[2]=3+(((float) rand() / (RAND_MAX))*velocidad);		//Distancia de C7 a CC
+	CC->distancia[0]=C6->distancia[2];									//Distancia de CC a C6
+	CC->distancia[1]=C7->distancia[2];									//Distancia de CC a C7
 	
-	CL->distancia[0]=4;		//Distancia de CL a C1
-	CL->distancia[1]=2;		//Distancia de CL a C2
-	C1->distancia[0]=CL->distancia[0];							//Distancia de C1 a CL
-	C1->distancia[1]=3;	//Distancia de C1 a C3
-	C1->distancia[2]=4;		//Distancia de C1 a C3
-	C2->distancia[0]=CL->distancia[1];							//Distancia de C2 a CL
-	C2->distancia[1]=C1->distancia[1];							//Distancia de C2 a C1
-	C2->distancia[2]=5;		//Distancia de C2 a C3
-	C2->distancia[3]=10;	//Distancia de C2 a C4
-	C3->distancia[0]=C1->distancia[2];							//Distancia de C3 a C1
-	C3->distancia[1]=C2->distancia[2];							//Distancia de C3 a C2
-	C3->distancia[2]=1;		//Distancia de C3 a C4
-	C3->distancia[3]=10;	//Distancia de C3 a C5
-	C4->distancia[0]=C2->distancia[3];							//Distancia de C4 a C2
-	C4->distancia[1]=C3->distancia[2];							//Distancia de C4 a C3
-	C4->distancia[2]=9;		//Distancia de C4 a C5
-	C5->distancia[0]=C3->distancia[3];							//Distancia de C5 a C3
-	C5->distancia[1]=C4->distancia[2];							//Distancia de C5 a C4
-	C5->distancia[2]=5;	//Distancia de C5 a C6
-	C5->distancia[3]=6;	//Distancia de C5 a C7
-	C6->distancia[0]=C5->distancia[2];							//Distancia de C6 a C5
-	C6->distancia[1]=4;	//Distancia de C6 a C7
-	C6->distancia[2]=2;	//Distancia de C6 a CC
-	C7->distancia[0]=C5->distancia[3];							//Distancia de C7 a C5
-	C7->distancia[1]=C6->distancia[1];							//Distancia de C7 a C6
-	C7->distancia[2]=3;		//Distancia de C7 a CC
-	CC->distancia[0]=C6->distancia[2];							//Distancia de CC a C6
-	CC->distancia[1]=C7->distancia[2];							//Distancia de CC a C7
-		
 	CL->adyacente[0]=C1;				//Conexion CL-C1
 	CL->adyacente[1]=C2;				//Conexion CL-C2
 	C1->adyacente[0]=CL;				//Conexion C1-CL
@@ -200,11 +178,8 @@ void dijkstra(NODO *&P){
 			i++;
 		}
 	}
-	
 	camino = P->adyacente[i];
-	//cout<<camino->descripcion<<endl;
 	camino->etiqueta=true;
-	
 	P = camino;	
 }
 
